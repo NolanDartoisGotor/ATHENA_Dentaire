@@ -1,0 +1,21 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Sections{% endblock %}
+{% block admin_title %}Sections textuelles{% endblock %}
+{% block admin_body %}
+<div class="mb-4">
+    <table class="admin-table">
+        <thead>
+            <tr><th>Clé</th><th>Titre</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for section in sections %}
+            <tr>
+                <td><code>{{ section.sectionKey }}</code></td>
+                <td>{{ section.title }}</td>
+                <td><a href="{{ path('admin_section_edit', {id: section.id}) }}" class="text-brand-cyan">Modifier</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

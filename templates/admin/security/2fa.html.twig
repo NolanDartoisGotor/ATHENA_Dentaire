@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification | Athéna Dentaire</title>
+    <link rel="stylesheet" href="{{ asset('styles/app.built.css') }}">
+</head>
+<body class="flex min-h-screen items-center justify-center bg-brand-gray">
+<div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+    <h1 class="mb-2 text-center text-2xl font-bold text-brand-blue">Vérification en deux étapes</h1>
+    <p class="mb-6 text-center text-sm text-gray-600">Un code de vérification a été envoyé à votre adresse email.</p>
+
+    {% if authenticationError %}
+        <div class="mb-4 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-800">
+            {{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}
+        </div>
+    {% endif %}
+
+    <form class="admin-form space-y-4" action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}" method="post">
+        <div>
+            <label for="_auth_code">Code de vérification</label>
+            <input
+                id="_auth_code"
+                type="text"
+                name="{{ authCodeParameterName }}"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                autocomplete="one-time-code"
+                required
+                autofocus
+            >
+        </div>
+
+        {% if isCsrfProtectionEnabled %}
+            <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+        {% endif %}
+
+        <button type="submit" class="btn-primary w-full">Valider</button>
+    </form>
+
+    <p class="mt-4 text-center text-sm">
+        <a href="{{ logoutPath }}" class="text-brand-blue hover:underline">Annuler et se déconnecter</a>
+    </p>
+</div>
+</body>
+</html>

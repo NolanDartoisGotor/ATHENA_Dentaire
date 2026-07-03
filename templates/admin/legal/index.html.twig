@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Pages légales{% endblock %}
+{% block admin_title %}Pages légales{% endblock %}
+{% block admin_body %}
+<div class="mb-4">
+    <table class="admin-table">
+        <thead>
+            <tr><th>Page</th><th>Clé</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for section in sections %}
+            <tr>
+                <td>{{ section.title }}</td>
+                <td><code>{{ section.sectionKey }}</code></td>
+                <td><a href="{{ path('admin_legal_edit', {id: section.id}) }}" class="text-brand-cyan">Modifier</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">Aucune page légale trouvée. Exécutez les fixtures pour initialiser le contenu.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

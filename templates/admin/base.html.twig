@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %} | Athéna Dentaire</title>
+    <link rel="stylesheet" href="{{ asset('styles/app.built.css') }}">
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <p class="text-lg font-bold">Athéna Admin</p>
+        <nav>
+            <a href="{{ path('admin_dashboard') }}">Tableau de bord</a>
+            <a href="{{ path('admin_message_index') }}">Messages</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_settings') }}">Paramètres</a>
+                <a href="{{ path('admin_legal_index') }}">Pages légales</a>
+                <a href="{{ path('admin_section_index') }}">Sections</a>
+                <a href="{{ path('admin_opening_hour_index') }}">Horaires</a>
+                <a href="{{ path('admin_facility_index') }}">Plateau technique</a>
+                <a href="{{ path('admin_service_index') }}">Services</a>
+                <a href="{{ path('admin_team_index') }}">Équipe</a>
+                <a href="{{ path('admin_user_index') }}">Utilisateurs</a>
+            {% endif %}
+            <a href="{{ path('home') }}">Voir le site</a>
+            <a href="{{ path('admin_logout') }}">Déconnexion</a>
+        </nav>
+    </aside>
+    <div class="admin-main">
+        <header class="admin-header">
+            <h1 class="text-xl font-semibold">{% block admin_title %}Administration{% endblock %}</h1>
+            <span class="text-sm text-gray-500">{{ app.user ? app.user.userIdentifier : '' }}</span>
+        </header>
+        <div class="admin-content">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash flash-{{ label }}">{{ message }}</div>
+                {% endfor %}
+            {% endfor %}
+            {% block admin_body %}{% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

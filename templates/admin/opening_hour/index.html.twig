@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Horaires{% endblock %}
+{% block admin_title %}Horaires d'ouverture{% endblock %}
+{% block admin_body %}
+<p class="mb-4"><a href="{{ path('admin_opening_hour_new') }}" class="btn-primary">Ajouter un horaire</a></p>
+<table class="admin-table">
+    <thead><tr><th>Jour</th><th>Horaires</th><th>Position</th><th></th></tr></thead>
+    <tbody>
+        {% for hour in hours %}
+        <tr>
+            <td>{{ hour.dayLabel }}</td>
+            <td>{{ hour.hours }}</td>
+            <td>{{ hour.position }}</td>
+            <td class="space-x-2">
+                <a href="{{ path('admin_opening_hour_edit', {id: hour.id}) }}" class="text-brand-cyan">Modifier</a>
+                <form method="post" action="{{ path('admin_opening_hour_delete', {id: hour.id}) }}" class="inline" onsubmit="return confirm('Supprimer ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ hour.id) }}">
+                    <button type="submit" class="text-red-600">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

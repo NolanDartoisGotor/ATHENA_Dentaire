@@ -1,0 +1,311 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ settings.organizationName }}{% endblock %}
+
+{% block body %}
+{# Header #}
+<header class="fixed inset-x-0 top-0 z-50 border-b border-gray-200 bg-white" data-controller="mobile-menu">
+    <div class="page-shell flex h-[72px] items-center justify-between px-5 md:h-20 md:px-20">
+        <a href="#cabinet" class="flex items-center gap-2.5 md:gap-3">
+            <img src="{{ asset('images/logo.svg') }}" alt="" class="h-6 w-6 md:h-7 md:w-7" width="28" height="28">
+            <span class="font-[family-name:var(--font-literata)] text-lg font-extrabold text-brand-blue md:text-[22px]">Athéna Dentaire</span>
+        </a>
+
+        <nav class="hidden items-center gap-10 text-[15px] font-medium text-[#1a1a1a] lg:flex">
+            <a href="#cabinet" class="hover:text-brand-cyan">Le Cabinet</a>
+            <a href="#services" class="hover:text-brand-cyan">Services</a>
+            <a href="#equipe" class="hover:text-brand-cyan">L'Équipe</a>
+            <a href="#informations" class="hover:text-brand-cyan">Informations</a>
+            <a href="#acces" class="hover:text-brand-cyan">Accès</a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+            {% if settings.phone %}
+            <a href="tel:{{ settings.phone|tel_href }}" class="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-brand-cyan lg:hidden" aria-label="Appeler le cabinet">
+                <img src="{{ asset('images/icon-phone.svg') }}" alt="" class="h-5 w-5" width="20" height="20">
+            </a>
+            <a href="tel:{{ settings.phone|tel_href }}" class="btn-primary hidden lg:inline-flex">
+                <img src="{{ asset('images/icon-phone.svg') }}" alt="" class="h-5 w-5" width="20" height="20">
+                APPELER LE CABINET
+            </a>
+            {% endif %}
+            <button type="button" class="lg:hidden" data-action="mobile-menu#toggle" aria-label="Menu">
+                <img src="{{ asset('images/icon-menu.svg') }}" alt="" class="h-6 w-6" width="24" height="24">
+            </button>
+        </div>
+    </div>
+
+    <nav data-mobile-menu-target="menu" class="hidden border-t border-gray-200 bg-white px-5 py-4 lg:hidden">
+        <div class="flex flex-col gap-3 text-[15px] font-medium">
+            <a href="#cabinet" data-action="mobile-menu#close">Le Cabinet</a>
+            <a href="#services" data-action="mobile-menu#close">Services</a>
+            <a href="#equipe" data-action="mobile-menu#close">L'Équipe</a>
+            <a href="#informations" data-action="mobile-menu#close">Informations</a>
+            <a href="#acces" data-action="mobile-menu#close">Accès</a>
+            <a href="#contact" data-action="mobile-menu#close">Contact</a>
+        </div>
+    </nav>
+</header>
+
+<main class="pt-[72px] md:pt-20">
+    {# Hero #}
+    <section id="cabinet" class="bg-white">
+        <div class="page-shell flex flex-col lg:min-h-[700px] lg:flex-row">
+            <div class="h-[240px] w-full lg:h-auto lg:flex-1">
+                {% if settings.heroImage %}
+                    <img src="{{ asset(settings.heroImage) }}" alt="Cabinet Athéna Dentaire" class="h-full w-full object-cover">
+                {% endif %}
+            </div>
+            <div class="flex w-full flex-col gap-5 p-4 md:gap-6 md:p-16 lg:w-[600px] lg:shrink-0 lg:pt-16">
+                <div class="space-y-3">
+                    <h1 class="font-[family-name:var(--font-montserrat)] text-[32px] font-bold leading-tight tracking-[-0.96px] text-brand-blue md:text-[48px] md:leading-[58px]">
+                        {{ settings.organizationName }}
+                    </h1>
+                    <p class="text-base leading-[26px] text-[#4b5563]">{{ settings.tagline }}</p>
+                </div>
+
+                <div class="card-shadow rounded-[20px] border border-gray-200 p-6 md:rounded-3xl md:p-10">
+                    <div class="mb-6 space-y-2">
+                        <h2 class="font-[family-name:var(--font-montserrat)] text-[22px] font-medium leading-[31px] text-brand-blue md:text-[32px] md:font-semibold md:leading-[42px]">
+                            {{ appointmentSection.title }}
+                        </h2>
+                        <p class="text-[13px] leading-[18px] text-[#4b5563] md:text-base md:leading-[26px]">{{ appointmentSection.body|nl2br }}</p>
+                    </div>
+                    {% if settings.phone %}
+                        <a href="tel:{{ settings.phone|tel_href }}" class="mb-6 inline-block font-[family-name:var(--font-ibm-mono)] text-[26px] font-bold text-brand-cyan hover:underline md:text-[36px]">
+                            📞 {{ settings.phone }}
+                        </a>
+                    {% endif %}
+                    <div class="space-y-3 text-sm">
+                        {% for hour in openingHours %}
+                            <div class="flex items-start justify-between border-b border-gray-200 pb-2 {% if loop.last %}border-0{% endif %}">
+                                <span class="font-[family-name:var(--font-dm-sans)] text-[13px] font-semibold text-[#1a1a1a] md:text-sm">{{ hour.dayLabel }}</span>
+                                <span class="font-[family-name:var(--font-dm-sans)] text-xs text-[#4b5563] md:text-sm">{{ hour.hours }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Banners urgences / avant consultation #}
+    <section id="informations" class="bg-white">
+        <div class="page-shell flex flex-col bg-brand-blue lg:flex-row">
+        <div class="flex flex-1">
+            <div class="w-1.5 shrink-0 bg-brand-red md:w-2"></div>
+            <div class="flex flex-1 flex-col gap-4 p-6 md:gap-5 md:p-[60px]">
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('images/icon-siren.svg') }}" alt="" class="h-6 w-6 md:h-8 md:w-8" width="32" height="32">
+                    <h2 class="font-[family-name:var(--font-montserrat)] text-[22px] font-medium text-white md:text-[32px] md:font-semibold md:leading-[42px]">
+                        {{ emergencySection.title }}
+                    </h2>
+                </div>
+                <p class="text-[13px] leading-[18px] text-white/80 md:text-base md:leading-[26px]">{{ emergencySection.body|nl2br }}</p>
+                {% if settings.emergencyPhone %}
+                    <a href="tel:{{ settings.emergencyPhone|tel_href }}" class="inline-block font-[family-name:var(--font-ibm-mono)] text-lg font-bold text-white hover:underline md:text-2xl">
+                        📞 {{ settings.emergencyPhone }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="flex flex-1">
+            <div class="w-1.5 shrink-0 bg-brand-cyan md:w-2"></div>
+            <div class="flex flex-1 flex-col gap-4 p-6 md:gap-5 md:p-[60px]">
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('images/icon-clipboard.svg') }}" alt="" class="h-6 w-6 md:h-8 md:w-8" width="32" height="32">
+                    <h2 class="font-[family-name:var(--font-montserrat)] text-[22px] font-medium text-white md:text-[32px] md:font-semibold md:leading-[42px]">
+                        {{ beforeConsultationSection.title }}
+                    </h2>
+                </div>
+                <div class="space-y-3 text-[13px] leading-[18px] text-white md:text-base md:leading-[26px]">
+                    {{ beforeConsultationSection.body|nl2br }}
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    {# Plateau technique #}
+    <section class="bg-white py-[60px] md:py-[120px]">
+        <div class="page-section">
+        <div class="page-inner">
+            <div class="mb-10 space-y-4 text-center md:mb-12">
+                <h2 class="section-title">{{ technicalIntro.title }}</h2>
+                {% if technicalIntro.subtitle %}
+                    <p class="mx-auto max-w-[720px] text-base leading-[26px] text-[#4b5563]">{{ technicalIntro.subtitle }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-col gap-5 md:gap-6">
+                <div class="grid gap-5 md:grid-cols-2 md:gap-6">
+                    {% for facility in facilities %}
+                        {% if facility.layout == 'large' %}
+                            {% include 'partials/_facility_card.html.twig' with {facility: facility} %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="grid gap-5 md:grid-cols-3 md:gap-6">
+                    {% for facility in facilities %}
+                        {% if facility.layout != 'large' %}
+                            {% include 'partials/_facility_card.html.twig' with {facility: facility} %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    {# Services #}
+    <section id="services" class="bg-brand-gray py-[60px] md:py-[120px]">
+        <div class="page-section">
+        <div class="page-inner">
+            <h2 class="section-title mb-8 text-center md:mb-12">{{ servicesIntro.title }}</h2>
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+                {% for service in services %}
+                    <div class="rounded-2xl border border-gray-200 bg-white p-5 md:p-8">
+                        {% if service.icon %}
+                            <div class="mb-4 flex h-[48px] w-[48px] items-center justify-center rounded-xl bg-[#e0f7fa] md:mb-5 md:h-[60px] md:w-[60px]">
+                                <img src="{{ asset(service.icon) }}" alt="" class="h-8 w-8" width="32" height="32">
+                            </div>
+                        {% endif %}
+                        <h3 class="mb-2 font-[family-name:var(--font-montserrat)] text-[22px] font-medium leading-[31px] text-brand-blue">{{ service.title }}</h3>
+                        <p class="text-[13px] leading-[18px] text-[#4b5563]">{{ service.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+    </section>
+
+    {# Équipe #}
+    <section id="equipe" class="bg-white py-[60px] md:py-[120px]">
+        <div class="page-section">
+        <div class="page-inner">
+            <div class="mb-10 space-y-4 text-center md:mb-12">
+                <h2 class="section-title">{{ teamIntro.title }}</h2>
+                {% if teamIntro.subtitle %}
+                    <p class="mx-auto max-w-[720px] text-base leading-[26px] text-[#4b5563]">{{ teamIntro.subtitle }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-10 grid gap-6 md:grid-cols-2 lg:mb-20 lg:grid-cols-5 lg:gap-10">
+                {% for member in teamMembers %}
+                    <div class="flex items-center gap-4 lg:flex-col lg:text-center">
+                        <div class="shrink-0 overflow-hidden rounded-full border-2 border-brand-cyan p-0.5 lg:border-[3px] lg:p-1">
+                            {% if member.photo %}
+                                <img src="{{ asset(member.photo) }}" alt="{{ member.fullName }}" class="h-20 w-20 rounded-full object-cover lg:h-[180px] lg:w-[180px]">
+                            {% else %}
+                                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-brand-gray lg:h-[180px] lg:w-[180px]"></div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="text-base font-normal text-[#1a1a1a]">{{ member.fullName }}</p>
+                            <p class="text-[13px] text-[#4b5563]">{{ member.role }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if settings.assistantsList %}
+                <div class="rounded-2xl bg-brand-gray p-4 text-center md:rounded-full md:p-6">
+                    <p class="text-[13px] leading-[18px] text-[#4b5563] md:text-base md:leading-[26px]">
+                        Nos Assistantes :
+                        <span class="font-semibold text-brand-blue">{{ settings.assistantsList }}</span>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+        </div>
+    </section>
+
+    {# Footer / Contact #}
+    <section id="acces" class="bg-brand-blue">
+        <div class="page-section py-10 md:py-5">
+        <div class="page-inner grid gap-10 md:grid-cols-2 md:gap-20">
+            <div id="contact" class="space-y-6 md:space-y-8">
+                <h2 class="font-[family-name:var(--font-montserrat)] text-[32px] font-bold leading-tight text-white md:text-[48px] md:leading-[58px]">Nous trouver</h2>
+                <div class="space-y-4 md:space-y-6">
+                    {% if settings.mapImage %}
+                        <img src="{{ asset(settings.mapImage) }}" alt="Carte" class="h-[200px] w-full rounded-xl object-cover md:h-[360px] md:rounded-2xl">
+                    {% elseif settings.googleMapsEmbedUrl %}
+                        <iframe src="{{ settings.googleMapsEmbedUrl }}" class="h-[200px] w-full rounded-xl md:h-[360px] md:rounded-2xl" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Carte Google Maps"></iframe>
+                    {% endif %}
+                    <div class="text-white">
+                        <p class="text-base">{{ settings.organizationName }}</p>
+                        <p class="text-[13px] opacity-80 md:text-base">{{ settings.address }}</p>
+                    </div>
+                    {% if settings.accessPlanImage %}
+                        <img src="{{ asset(settings.accessPlanImage) }}" alt="Plan d'accès" class="h-20 w-full rounded-lg object-cover md:h-[120px] md:rounded-xl">
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="space-y-6 md:space-y-8">
+                <h2 class="font-[family-name:var(--font-montserrat)] text-[32px] font-bold leading-tight text-white md:text-[48px] md:leading-[58px]">Nous contacter</h2>
+
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="rounded-xl px-4 py-3 text-sm {% if label == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <div class="max-w-[600px] space-y-5 md:space-y-6 md:p-8">
+                    {% if settings.contactFormNotice %}
+                        <div class="flex gap-3 rounded-xl border border-b-4 border-[#f59e0b] border-l-[#f59e0b] bg-white p-4">
+                            <img src="{{ asset('images/icon-alert.svg') }}" alt="" class="mt-0.5 h-5 w-5 shrink-0 md:h-6 md:w-6" width="24" height="24">
+                            <p class="text-[13px] leading-[18px] text-[#111827]">{{ settings.contactFormNotice }}</p>
+                        </div>
+                    {% endif %}
+
+                    {{ form_start(form, {attr: {class: 'space-y-4 md:space-y-5'}}) }}
+                        <div class="grid gap-4 md:grid-cols-2 md:gap-5">
+                            <div>
+                                {{ form_label(form.lastName, null, {label_attr: {class: 'mb-1.5 block text-[13px] text-white'}}) }}
+                                {{ form_widget(form.lastName, {attr: {class: 'h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 text-sm text-white placeholder:text-gray-400'}}) }}
+                                {{ form_errors(form.lastName) }}
+                            </div>
+                            <div>
+                                {{ form_label(form.firstName, null, {label_attr: {class: 'mb-1.5 block text-[13px] text-white'}}) }}
+                                {{ form_widget(form.firstName, {attr: {class: 'h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 text-sm text-white placeholder:text-gray-400'}}) }}
+                                {{ form_errors(form.firstName) }}
+                            </div>
+                        </div>
+                        <div>
+                            {{ form_label(form.email, null, {label_attr: {class: 'mb-1.5 block text-[13px] text-white'}}) }}
+                            {{ form_widget(form.email, {attr: {class: 'h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 text-sm text-white placeholder:text-gray-400'}}) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div>
+                            {{ form_label(form.subject, null, {label_attr: {class: 'mb-1.5 block text-[13px] text-white'}}) }}
+                            {{ form_widget(form.subject, {attr: {class: 'h-11 w-full rounded-lg border border-gray-200 bg-transparent px-3 text-sm text-white placeholder:text-gray-400'}}) }}
+                            {{ form_errors(form.subject) }}
+                        </div>
+                        <div>
+                            {{ form_label(form.message, null, {label_attr: {class: 'mb-1.5 block text-[13px] text-white'}}) }}
+                            {{ form_widget(form.message, {attr: {class: 'min-h-[100px] w-full rounded-lg border border-gray-200 bg-transparent px-3 py-3 text-sm text-white placeholder:text-gray-400 md:min-h-[120px]'}}) }}
+                            {{ form_errors(form.message) }}
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            {{ form_widget(form.consent, {attr: {class: 'mt-1 h-[18px] w-[18px] rounded border-gray-200'}}) }}
+                            {{ form_label(form.consent, "J'accepte que mes données soient utilisées pour me recontacter, conformément à la <a href=\"" ~ path('privacy_policy') ~ "\" class=\"underline hover:text-brand-cyan\" target=\"_blank\" rel=\"noopener noreferrer\">politique de confidentialité</a>.", {label_attr: {class: 'text-[13px] leading-[18px] text-white'}, label_html: true}) }}
+                        </div>
+                        {{ form_errors(form.consent) }}
+                        {{ form_widget(form.submit, {attr: {class: 'btn-primary w-full uppercase md:normal-case'}}) }}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="bg-brand-dark">
+            <div class="page-shell px-5 py-5 text-center md:flex md:h-[60px] md:items-center md:justify-center md:py-0">
+                {% include 'partials/site_footer.html.twig' %}
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

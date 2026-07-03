@@ -1,0 +1,14 @@
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+    code_reuse_cache: cache.app
+    code_reuse_cache_duration: 600
+    email:
+        enabled: true
+        mailer: App\Service\AdminTwoFactorMailer
+        code_generator: App\Security\TwoFactor\ExpiringEmailCodeGenerator
+        sender_email: '%env(SECURITY_EMAIL_FROM)%'
+        sender_name: 'Athéna Dentaire'
+        digits: 6
+        template: admin/security/2fa.html.twig

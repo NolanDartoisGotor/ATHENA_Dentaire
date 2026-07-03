@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Code de vérification</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5;">
+    <h1 style="font-size: 20px; color: #1e3a8a;">Vérification de connexion admin</h1>
+    <p>Utilisez le code ci-dessous pour finaliser votre connexion à l'administration Athéna Dentaire :</p>
+    <p style="font-size: 28px; font-weight: bold; letter-spacing: 4px; margin: 24px 0;">{{ authCode }}</p>
+    {% if expiresAt %}
+        <p>Ce code expire le {{ expiresAt|date('d/m/Y à H:i') }}.</p>
+    {% else %}
+        <p>Ce code expire dans 10 minutes.</p>
+    {% endif %}
+    <p style="color: #6b7280; font-size: 14px;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
+</body>
+</html>

@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+    --color-brand-blue: #0d3d6e;
+    --color-brand-cyan: #00b5cf;
+    --color-brand-gray: #f5f7fa;
+    --color-brand-dark: #08294a;
+    --color-brand-red: #ef4444;
+    --font-montserrat: "Montserrat", sans-serif;
+    --font-inter: "Inter", sans-serif;
+    --font-dm-sans: "DM Sans", sans-serif;
+    --font-ibm-mono: "IBM Plex Mono", monospace;
+    --font-literata: "Literata", serif;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply font-[family-name:var(--font-inter)] text-[#1a1a1a] antialiased;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2.5 rounded-full bg-brand-cyan px-7 py-3.5 text-[15px] font-bold text-white transition hover:opacity-90;
+    }
+
+    .section-title {
+        @apply font-[family-name:var(--font-montserrat)] text-[32px] font-semibold leading-[42px] tracking-[-0.48px] text-[#1a1a1a] md:text-[48px] md:font-bold md:leading-[58px] md:tracking-[-0.96px];
+    }
+
+    .card-shadow {
+        @apply rounded-2xl bg-white shadow-[0_10px_20px_rgba(0,0,0,0.06)];
+    }
+
+    /* Maquette Figma : frame 1440px, contenu intérieur 1280px (padding 80px) */
+    .page-shell {
+        @apply mx-auto w-full max-w-[1440px];
+    }
+
+    .page-inner {
+        @apply mx-auto w-full max-w-[1280px];
+    }
+
+    .page-section {
+        @apply mx-auto w-full max-w-[1440px] px-5 md:px-20;
+    }
+
+    .admin-layout {
+        @apply flex min-h-screen bg-brand-gray;
+    }
+
+    .admin-sidebar {
+        @apply w-64 shrink-0 bg-brand-blue p-6 text-white;
+    }
+
+    .admin-sidebar nav {
+        @apply mt-6 flex flex-col gap-2;
+    }
+
+    .admin-sidebar a {
+        @apply rounded-lg px-3 py-2 text-sm text-white/90 hover:bg-white/10;
+    }
+
+    .admin-main {
+        @apply flex flex-1 flex-col;
+    }
+
+    .admin-header {
+        @apply flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4;
+    }
+
+    .admin-content {
+        @apply flex-1 p-6;
+    }
+
+    .flash {
+        @apply mb-4 rounded-lg px-4 py-3 text-sm;
+    }
+
+    .flash-success {
+        @apply bg-green-100 text-green-800;
+    }
+
+    .flash-error {
+        @apply bg-red-100 text-red-800;
+    }
+
+    .admin-table {
+        @apply w-full border-collapse rounded-lg bg-white text-sm shadow;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        @apply border-b border-gray-100 px-4 py-3 text-left;
+    }
+
+    .admin-form label {
+        @apply mb-1 block text-sm font-medium text-gray-700;
+    }
+
+    .admin-form input,
+    .admin-form textarea,
+    .admin-form select {
+        @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm;
+    }
+
+    .admin-form .form-actions {
+        @apply mt-6;
+    }
+
+    .admin-form input[type="file"] {
+        @apply cursor-pointer border border-dashed border-gray-300 bg-gray-50 px-3 py-2 file:mr-4 file:rounded-md file:border-0 file:bg-brand-blue file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:opacity-90;
+    }
+
+    .admin-image-upload {
+        @apply mb-4;
+    }
+
+    .admin-image-upload__label {
+        @apply mb-2 block text-sm font-medium text-gray-500;
+    }
+
+    .admin-image-upload__preview-wrap {
+        @apply mb-4 inline-flex rounded-lg border border-gray-200 bg-gray-50 p-2;
+    }
+
+    .admin-image-upload__preview-wrap--round {
+        @apply rounded-full;
+    }
+
+    .admin-image-upload__preview {
+        @apply max-h-48 max-w-full object-cover;
+    }
+
+    .admin-image-upload__preview--round {
+        @apply h-32 w-32 rounded-full;
+    }
+}

@@ -1,0 +1,9 @@
+<div class="overflow-hidden rounded-2xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.03)] md:shadow-[0_10px_20px_rgba(0,0,0,0.06)]">
+    {% if facility.image %}
+        <img src="{{ asset(facility.image) }}" alt="{{ facility.title }}" class="h-[180px] w-full object-cover md:h-[240px]">
+    {% endif %}
+    <div class="space-y-2 p-4 md:space-y-3 md:p-6">
+        <h3 class="font-[family-name:var(--font-montserrat)] text-[22px] font-medium leading-[31px] text-brand-blue">{{ facility.title }}</h3>
+        <p class="text-[13px] leading-[18px] text-[#4b5563]">{{ facility.description }}</p>
+    </div>
+</div>

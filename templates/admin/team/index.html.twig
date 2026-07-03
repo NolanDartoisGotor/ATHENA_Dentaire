@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Équipe{% endblock %}
+{% block admin_title %}Équipe{% endblock %}
+{% block admin_body %}
+<p class="mb-4"><a href="{{ path('admin_team_new') }}" class="btn-primary">Ajouter un membre</a></p>
+<table class="admin-table">
+    <thead><tr><th>Nom</th><th>Fonction</th><th>Position</th><th></th></tr></thead>
+    <tbody>
+        {% for member in members %}
+        <tr>
+            <td>{{ member.fullName }}</td>
+            <td>{{ member.role }}</td>
+            <td>{{ member.position }}</td>
+            <td class="space-x-2">
+                <a href="{{ path('admin_team_edit', {id: member.id}) }}" class="text-brand-cyan">Modifier</a>
+                <form method="post" action="{{ path('admin_team_delete', {id: member.id}) }}" class="inline" onsubmit="return confirm('Supprimer ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ member.id) }}">
+                    <button type="submit" class="text-red-600">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

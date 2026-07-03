@@ -1,0 +1,8 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ is_new ? 'Nouvel horaire' : 'Modifier horaire' }}{% endblock %}
+{% block admin_title %}{{ is_new ? 'Nouvel horaire' : 'Modifier horaire' }}{% endblock %}
+{% block admin_body %}
+<div class="max-w-xl rounded-xl bg-white p-6 shadow admin-form">
+    {{ form_start(form) }}{{ form_widget(form) }}{{ form_end(form) }}
+</div>
+{% endblock %}

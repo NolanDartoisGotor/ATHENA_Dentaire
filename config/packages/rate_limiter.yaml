@@ -1,0 +1,10 @@
+framework:
+    rate_limiter:
+        contact_form:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '1 hour'
+        admin_two_factor:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '15 minutes'

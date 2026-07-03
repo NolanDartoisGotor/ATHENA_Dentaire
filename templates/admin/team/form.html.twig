@@ -1,0 +1,21 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ is_new ? 'Nouveau membre' : 'Modifier membre' }}{% endblock %}
+{% block admin_title %}{{ is_new ? 'Nouveau membre' : 'Modifier membre' }}{% endblock %}
+{% block admin_body %}
+<div class="max-w-xl rounded-xl bg-white p-6 shadow admin-form">
+    {{ form_start(form, { attr: { enctype: 'multipart/form-data' } }) }}
+        {{ form_row(form.fullName) }}
+        {{ form_row(form.role) }}
+        {% include 'admin/_image_upload_field.html.twig' with {
+            form: form,
+            fileFieldName: 'photoFile',
+            currentPath: member.photo,
+            previewClass: 'admin-image-upload__preview--round',
+            previewWrapClass: 'admin-image-upload__preview-wrap--round',
+        } %}
+        {{ form_row(form.position) }}
+        {{ form_row(form.published) }}
+        {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %}

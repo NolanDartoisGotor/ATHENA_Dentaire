@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Plateau technique{% endblock %}
+{% block admin_title %}Plateau technique{% endblock %}
+{% block admin_body %}
+<p class="mb-4"><a href="{{ path('admin_facility_new') }}" class="btn-primary">Ajouter un élément</a></p>
+<table class="admin-table">
+    <thead><tr><th>Titre</th><th>Layout</th><th>Position</th><th></th></tr></thead>
+    <tbody>
+        {% for facility in facilities %}
+        <tr>
+            <td>{{ facility.title }}</td>
+            <td>{{ facility.layout }}</td>
+            <td>{{ facility.position }}</td>
+            <td class="space-x-2">
+                <a href="{{ path('admin_facility_edit', {id: facility.id}) }}" class="text-brand-cyan">Modifier</a>
+                <form method="post" action="{{ path('admin_facility_delete', {id: facility.id}) }}" class="inline" onsubmit="return confirm('Supprimer ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ facility.id) }}">
+                    <button type="submit" class="text-red-600">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Services{% endblock %}
+{% block admin_title %}Pôles de compétences{% endblock %}
+{% block admin_body %}
+<p class="mb-4"><a href="{{ path('admin_service_new') }}" class="btn-primary">Ajouter un service</a></p>
+<table class="admin-table">
+    <thead><tr><th>Titre</th><th>Position</th><th>Publié</th><th></th></tr></thead>
+    <tbody>
+        {% for service in services %}
+        <tr>
+            <td>{{ service.title }}</td>
+            <td>{{ service.position }}</td>
+            <td>{{ service.published ? 'Oui' : 'Non' }}</td>
+            <td class="space-x-2">
+                <a href="{{ path('admin_service_edit', {id: service.id}) }}" class="text-brand-cyan">Modifier</a>
+                <form method="post" action="{{ path('admin_service_delete', {id: service.id}) }}" class="inline" onsubmit="return confirm('Supprimer ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ service.id) }}">
+                    <button type="submit" class="text-red-600">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

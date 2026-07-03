@@ -1,0 +1,27 @@
+<div class="admin-image-upload" data-controller="image-preview">
+    {% if currentPath %}
+        <p class="admin-image-upload__label">Image actuelle</p>
+        <div class="admin-image-upload__preview-wrap {{ previewWrapClass|default('') }}">
+            <img
+                src="{{ asset(currentPath) }}"
+                alt="Aperçu"
+                class="admin-image-upload__preview {{ previewClass|default('') }}"
+                data-image-preview-target="current"
+            >
+        </div>
+    {% endif %}
+
+    {{ form_row(attribute(form, fileFieldName), {
+        row_attr: { 'data-image-preview-target': 'input', 'data-action': 'change->image-preview#preview' },
+    }) }}
+
+    <p class="admin-image-upload__label hidden" data-image-preview-target="newLabel">Nouvelle image</p>
+    <div class="admin-image-upload__preview-wrap hidden {{ previewWrapClass|default('') }}" data-image-preview-target="previewWrap">
+        <img
+            src=""
+            alt="Nouvelle image"
+            class="admin-image-upload__preview hidden {{ previewClass|default('') }}"
+            data-image-preview-target="preview"
+        >
+    </div>
+</div>

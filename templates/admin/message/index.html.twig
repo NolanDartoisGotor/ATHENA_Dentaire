@@ -1,0 +1,21 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Messages{% endblock %}
+{% block admin_title %}Messages de contact{% endblock %}
+{% block admin_body %}
+<table class="admin-table">
+    <thead><tr><th>Date</th><th>Nom</th><th>Email</th><th>Sujet</th><th></th></tr></thead>
+    <tbody>
+        {% for message in messages %}
+        <tr>
+            <td>{{ message.createdAt|date('d/m/Y H:i') }}</td>
+            <td>{{ message.fullName }}</td>
+            <td>{{ message.email }}</td>
+            <td>{{ message.subject }}</td>
+            <td><a href="{{ path('admin_message_show', {id: message.id}) }}" class="text-brand-cyan">Voir</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5">Aucun message.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

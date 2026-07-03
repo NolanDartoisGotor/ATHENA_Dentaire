@@ -1,0 +1,20 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ is_new ? 'Nouvel élément' : 'Modifier élément' }}{% endblock %}
+{% block admin_title %}{{ is_new ? 'Nouvel élément' : 'Modifier élément' }}{% endblock %}
+{% block admin_body %}
+<div class="max-w-xl rounded-xl bg-white p-6 shadow admin-form">
+    {{ form_start(form, { attr: { enctype: 'multipart/form-data' } }) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+        {% include 'admin/_image_upload_field.html.twig' with {
+            form: form,
+            fileFieldName: 'imageFile',
+            currentPath: facility.image,
+        } %}
+        {{ form_row(form.layout) }}
+        {{ form_row(form.position) }}
+        {{ form_row(form.published) }}
+        {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %}
