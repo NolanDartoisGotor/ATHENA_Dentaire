@@ -1,0 +1,6 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            app.legal_sanitizer:
+                allow_safe_elements: true
+                allowed_link_schemes: ['https', 'http', 'mailto', 'tel']

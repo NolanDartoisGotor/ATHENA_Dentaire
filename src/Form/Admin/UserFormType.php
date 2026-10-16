@@ -14,6 +14,10 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 final class UserFormType extends AbstractType
 {
@@ -29,15 +33,22 @@ final class UserFormType extends AbstractType
                     'Éditeur' => User::ROLE_EDITOR,
                 ],
                 'multiple' => true,
+                'constraints' => [new Count(min: 1, minMessage: 'Choisissez au moins un rôle.')],
             ])
             ->add('emailAuthEnabled', CheckboxType::class, [
                 'label' => 'Double authentification par email',
+                'help' => 'Toujours active pour les administrateurs.',
                 'required' => false,
             ])
             ->add('plainPassword', PasswordType::class, [
                 'label' => 'Mot de passe',
                 'mapped' => false,
                 'required' => $options['is_new'],
+                'constraints' => [
+                    ...($options['is_new'] ? [new NotBlank()] : []),
+                    new Length(min: 12, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.'),
+                    new PasswordStrength(minScore: PasswordStrength::STRENGTH_MEDIUM, message: 'Mot de passe trop faible.'),
+                ],
             ])
             ->add('submit', SubmitType::class, ['label' => 'Enregistrer']);
     }

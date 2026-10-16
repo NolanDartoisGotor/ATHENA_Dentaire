@@ -30,4 +30,13 @@ final class UserTwoFactorTest extends TestCase
 
         self::assertFalse($user->isEmailAuthCodeExpired());
     }
+
+    public function testTwoFactorIsForcedForAdminsOnly(): void
+    {
+        $admin = (new User())->setRoles([User::ROLE_ADMIN])->setEmailAuthEnabled(false);
+        $editor = (new User())->setRoles([User::ROLE_EDITOR])->setEmailAuthEnabled(false);
+
+        self::assertTrue($admin->isEmailAuthEnabled());
+        self::assertFalse($editor->isEmailAuthEnabled());
+    }
 }

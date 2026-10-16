@@ -98,7 +98,7 @@ final class AdminTwoFactorAuthenticationTest extends WebTestCase
         self::assertSelectorExists('div.text-red-800');
     }
 
-    public function testAdminWithoutTwoFactorCanAccessDashboard(): void
+    public function testAdminAlwaysRequiresTwoFactorEvenWhenDisabled(): void
     {
         $client = $this->bootClientWithDatabase();
         $this->createAdminUser($client, false);
@@ -108,8 +108,9 @@ final class AdminTwoFactorAuthenticationTest extends WebTestCase
             '_username' => self::ADMIN_EMAIL,
             '_password' => self::ADMIN_PASSWORD,
         ]);
+        $client->followRedirect();
 
-        self::assertResponseRedirects('/admin');
+        self::assertResponseRedirects('/admin/2fa');
     }
 
     private function bootClientWithDatabase(): KernelBrowser

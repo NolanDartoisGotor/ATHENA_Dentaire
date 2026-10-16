@@ -30,11 +30,14 @@ final class AdminTwoFactorSecuritySubscriber
     #[AsEventListener(event: TwoFactorAuthenticationEvents::ATTEMPT)]
     public function onAttempt(TwoFactorAuthenticationEvent $event): void
     {
-        $limiter = $this->twoFactorLimiter->create($event->getRequest()->getClientIp() ?? 'unknown');
+        $ipLimiter = $this->twoFactorLimiter->create('ip:'.($event->getRequest()->getClientIp() ?? 'unknown'));
+        // Per-account limit so rotating IPs does not allow brute-forcing a single code.
+        $userLimiter = $this->twoFactorLimiter->create('user:'.$event->getToken()->getUserIdentifier());
 
-        if (!$limiter->consume()->isAccepted()) {
+        if (!$ipLimiter->consume()->isAccepted() || !$userLimiter->consume()->isAccepted()) {
             $this->logger->warning('Limite de tentatives 2FA atteinte', [
                 'ip' => $event->getRequest()->getClientIp(),
+                'user' => $event->getToken()->getUserIdentifier(),
             ]);
 
             throw new TooManyRequestsHttpException(900, 'Trop de tentatives. Réessayez dans 15 minutes.');

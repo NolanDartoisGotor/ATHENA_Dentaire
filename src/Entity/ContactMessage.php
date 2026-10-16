@@ -19,23 +19,28 @@ class ContactMessage
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\Length(max: 100)]
     #[Assert\NotBlank]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\Length(max: 100)]
     #[Assert\NotBlank]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 180)]
     #[Assert\Email]
     private ?string $email = null;
 
     #[ORM\Column(length: 200)]
+    #[Assert\Length(max: 200)]
     #[Assert\NotBlank]
     private ?string $subject = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(max: 5000)]
     #[Assert\NotBlank]
     private ?string $message = null;
 

@@ -41,6 +41,7 @@ class SiteSettings
     private ?string $formRecipientEmail = null;
 
     #[ORM\Column(length: 500, nullable: true)]
+    #[Assert\Regex(pattern: '#^https://www\.google\.com/maps/embed\?#', message: 'L\'URL doit commencer par https://www.google.com/maps/embed?')]
     private ?string $googleMapsEmbedUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]

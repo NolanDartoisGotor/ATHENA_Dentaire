@@ -118,7 +118,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     public function isEmailAuthEnabled(): bool
     {
-        return $this->emailAuthEnabled;
+        return $this->emailAuthEnabled || \in_array(self::ROLE_ADMIN, $this->roles, true);
     }
 
     public function setEmailAuthEnabled(bool $emailAuthEnabled): static
