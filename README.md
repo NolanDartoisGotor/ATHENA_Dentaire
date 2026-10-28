@@ -78,7 +78,7 @@ Pas de Docker : le site tourne sur l'hébergement Plesk avec PHP, MySQL et le se
 
 - Un abonnement Plesk avec accès SSH
 - PHP **8.4** activé pour le domaine, avec les extensions `pdo_mysql`, `intl`, `opcache`, `mbstring`, `xml` (ce sont les extensions de base proposées par Plesk)
-- Une base MySQL 8 (ou MariaDB récente) créée dans Plesk
+- Une base **MariaDB 10.5** (version du serveur de production : `10.5.29-MariaDB`, Debian 11) créée dans Plesk
 - Composer disponible sur le serveur (Plesk l'intègre dans l'onglet *Composer*, ou via SSH)
 
 ### 1. Déployer le code
@@ -107,13 +107,13 @@ Créer le fichier `.env.local` à la racine du projet (il n'est pas versionné) 
 APP_ENV=prod
 APP_SECRET=<valeur longue et aléatoire>
 DEFAULT_URI=https://www.athena-dentaire.fr
-DATABASE_URL="mysql://<user>:<mot_de_passe>@127.0.0.1:3306/<base>?serverVersion=8.4&charset=utf8mb4"
+DATABASE_URL="mysql://<user>:<mot_de_passe>@127.0.0.1:3306/<base>?serverVersion=mariadb-10.5.29&charset=utf8mb4"
 MAILER_DSN=smtp://<user>:<mot_de_passe>@<serveur-smtp>:587
 SECURITY_EMAIL_FROM=security@athena-dentaire.fr
 ```
 
 - `APP_SECRET` : `php -r "echo bin2hex(random_bytes(32));"`
-- `DATABASE_URL` : utiliser l'utilisateur et la base créés dans Plesk (**Bases de données**). Adapter `serverVersion` à la version réelle de MySQL/MariaDB.
+- `DATABASE_URL` : utiliser l'utilisateur et la base créés dans Plesk (**Bases de données**). Le préfixe `mariadb-` dans `serverVersion` indique à Doctrine qu'il s'agit de MariaDB : ne pas le retirer.
 - `MAILER_DSN` : le SMTP de la messagerie du domaine. Sans lui, les codes de double authentification ne partent pas.
 
 Compiler la configuration pour la production (évite de lire les fichiers `.env` à chaque requête) :
