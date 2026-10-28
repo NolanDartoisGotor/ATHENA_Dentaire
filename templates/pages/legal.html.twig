@@ -13,7 +13,7 @@
     </div>
 </header>
 
-<main class="min-h-[calc(100vh-72px)] bg-white md:min-h-[calc(100vh-80px)]">
+<main class="flex-1 bg-white">
     <article class="page-shell px-5 py-10 md:px-20 md:py-16">
         <header class="mb-8 space-y-2">
             <h1 class="font-[family-name:var(--font-montserrat)] text-[32px] font-bold leading-tight text-brand-blue md:text-[40px]">
@@ -28,10 +28,6 @@
         </div>
     </article>
 
-    <div class="bg-brand-dark">
-        <div class="page-shell px-5 py-5 text-center md:flex md:h-[60px] md:items-center md:justify-center md:py-0">
-            {% include 'partials/site_footer.html.twig' %}
-        </div>
-    </div>
 </main>
+{% include 'partials/site_footer.html.twig' %}
 {% endblock %}

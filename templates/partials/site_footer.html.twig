@@ -1,9 +1,39 @@
-<p class="text-[13px] leading-[18px] text-white/60">
-    © {{ 'now'|date('Y') }} {{ settings.organizationName }}
-    -
-    <a href="{{ path('legal_notice') }}" class="hover:text-white/90 underline-offset-2 hover:underline">Mentions légales</a>
-    -
-    <a href="{{ path('privacy_policy') }}" class="hover:text-white/90 underline-offset-2 hover:underline">Politique de confidentialité</a>
-    -
-    Site réalisé par <a href="https://www.gwm-agency.fr" target="_blank" rel="noopener noreferrer" class="hover:text-white/90 underline-offset-2 hover:underline">GWM Agency</a>
-</p>
+<footer class="bg-brand-dark text-white">
+    <div class="page-section py-10 md:py-12">
+        <div class="page-inner grid gap-8 md:grid-cols-3 md:gap-10">
+            <div class="space-y-3">
+                <p class="font-[family-name:var(--font-literata)] text-lg font-extrabold">{{ settings.organizationName }}</p>
+                <address class="text-[13px] not-italic leading-[20px] text-white/80 md:text-sm">{{ settings.address }}</address>
+            </div>
+
+            {% if settings.phone or settings.emergencyPhone %}
+                <ul class="space-y-2 text-[13px] leading-[20px] md:text-sm">
+                    {% if settings.phone %}
+                        <li>
+                            <span class="text-white/80">Cabinet :</span>
+                            <a href="tel:{{ settings.phone|tel_href }}" class="font-semibold underline underline-offset-2 hover:no-underline">{{ settings.phone }}</a>
+                        </li>
+                    {% endif %}
+                    {% if settings.emergencyPhone %}
+                        <li>
+                            <span class="text-white/80">Urgences :</span>
+                            <a href="tel:{{ settings.emergencyPhone|tel_href }}" class="font-semibold underline underline-offset-2 hover:no-underline">{{ settings.emergencyPhone }}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+
+            <ul class="space-y-2 text-[13px] leading-[20px] md:text-sm">
+                <li><a href="{{ path('legal_notice') }}" class="underline underline-offset-2 hover:no-underline">Mentions légales</a></li>
+                <li><a href="{{ path('privacy_policy') }}" class="underline underline-offset-2 hover:no-underline">Politique de confidentialité</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="border-t border-white/10">
+        <div class="page-section flex flex-col gap-1 py-4 text-center text-[13px] leading-[18px] text-white/70 md:flex-row md:justify-between md:text-left">
+            <p>© {{ 'now'|date('Y') }} {{ settings.organizationName }}</p>
+            <p>Site réalisé par <a href="https://www.gwm-agency.fr" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-white">GWM Agency<span class="sr-only"> (nouvel onglet)</span></a></p>
+        </div>
+    </div>
+</footer>

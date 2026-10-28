@@ -4,10 +4,15 @@ export default class extends Controller {
     static targets = ['menu', 'button'];
 
     toggle() {
-        this.menuTarget.classList.toggle('hidden');
+        this.#setOpen(this.menuTarget.classList.contains('hidden'));
     }
 
     close() {
-        this.menuTarget.classList.add('hidden');
+        this.#setOpen(false);
+    }
+
+    #setOpen(open) {
+        this.menuTarget.classList.toggle('hidden', !open);
+        this.buttonTarget.setAttribute('aria-expanded', String(open));
     }
 }

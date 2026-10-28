@@ -48,10 +48,10 @@ class SiteSettings
     private ?string $heroImage = 'images/hero.jpg';
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $mapImage = 'images/map.jpg';
+    private ?string $mapImage = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $accessPlanImage = 'images/access-plan.jpg';
+    private ?string $accessPlanImage = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $assistantsList = 'Céline • Sabrina • Christine • Céline • Océane • Maryline • Chloé';
