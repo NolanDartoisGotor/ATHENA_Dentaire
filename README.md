@@ -70,98 +70,127 @@ cp .env.prod.example .env.prod
 make prod-up
 ```
 
-## Installation sur Plesk
+## Installation sur Plesk (hébergement traditionnel)
 
-Le site tourne en conteneurs Docker (PHP-FPM, Nginx, MySQL). Plesk occupe déjà les ports 80 et 443 : Nginx du conteneur écoute donc sur un port interne, et Plesk fait le proxy HTTPS vers lui.
+Pas de Docker : le site tourne sur l'hébergement Plesk avec PHP, MySQL et le serveur web fournis par Plesk. Le CSS est déjà compilé dans le dépôt (`assets/styles/app.built.css`), Node.js n'est donc pas nécessaire sur le serveur.
 
 ### Prérequis
 
-- Un abonnement Plesk avec accès SSH root ou sudo
-- Docker et Docker Compose installés sur le serveur (extension Docker de Plesk, ou installation manuelle)
-- Un domaine pointant vers le serveur (ex. `www.athena-dentaire.fr`)
+- Un abonnement Plesk avec accès SSH
+- PHP **8.4** activé pour le domaine, avec les extensions `pdo_mysql`, `intl`, `opcache`, `mbstring`, `xml` (ce sont les extensions de base proposées par Plesk)
+- Une base MySQL 8 (ou MariaDB récente) créée dans Plesk
+- Composer disponible sur le serveur (Plesk l'intègre dans l'onglet *Composer*, ou via SSH)
 
-### 1. Cloner le projet
+### 1. Déployer le code
+
+Dans Plesk, ouvrir le domaine → **Git** (ou SSH) et cloner le dépôt **en dehors** du dossier web, par exemple :
 
 ```bash
 cd /var/www/vhosts/athena-dentaire.fr
-git clone <url-du-depot> athena
-cd athena
+git clone <url-du-depot> app
+cd app
 ```
 
-### 2. Configurer l'environnement
+Le dossier web du domaine (`httpdocs`) doit pointer vers le dossier **`public/`** du projet. Dans Plesk : **Hébergement web → Dossier racine du site** (ou *Document root*) → `app/public`.
+
+### 2. Installer les dépendances
 
 ```bash
-cp .env.prod.example .env.prod
+composer install --no-dev --optimize-autoloader --no-interaction
 ```
 
-Dans `.env.prod`, modifier au minimum :
+### 3. Configurer l'environnement
+
+Créer le fichier `.env.local` à la racine du projet (il n'est pas versionné) :
+
+```dotenv
+APP_ENV=prod
+APP_SECRET=<valeur longue et aléatoire>
+DEFAULT_URI=https://www.athena-dentaire.fr
+DATABASE_URL="mysql://<user>:<mot_de_passe>@127.0.0.1:3306/<base>?serverVersion=8.4&charset=utf8mb4"
+MAILER_DSN=smtp://<user>:<mot_de_passe>@<serveur-smtp>:587
+SECURITY_EMAIL_FROM=security@athena-dentaire.fr
+```
 
 - `APP_SECRET` : `php -r "echo bin2hex(random_bytes(32));"`
-- `DEFAULT_URI` : `https://www.athena-dentaire.fr`
-- `MYSQL_PASSWORD` et le mot de passe dans `DATABASE_URL` (identiques), ainsi que `MYSQL_ROOT_PASSWORD`
-- `MAILER_DSN` : serveur SMTP réel (ex. celui de la messagerie du domaine)
-- `SECURITY_EMAIL_FROM` : adresse expéditrice des codes de double authentification
-- `HTTP_PORT=8080` : port interne du conteneur Nginx (ne pas utiliser 80, occupé par Plesk)
+- `DATABASE_URL` : utiliser l'utilisateur et la base créés dans Plesk (**Bases de données**). Adapter `serverVersion` à la version réelle de MySQL/MariaDB.
+- `MAILER_DSN` : le SMTP de la messagerie du domaine. Sans lui, les codes de double authentification ne partent pas.
 
-### 3. Lancer les conteneurs
+Compiler la configuration pour la production (évite de lire les fichiers `.env` à chaque requête) :
 
 ```bash
-make prod-up
-make prod-logs    # vérifier qu'il n'y a pas d'erreur au démarrage
+composer dump-env prod
 ```
 
-Les migrations sont lancées automatiquement au démarrage (`RUN_MIGRATIONS=true`).
-
-### 4. Créer le compte administrateur
-
-Les fixtures ne doivent **pas** être chargées en production : elles créent des comptes de démonstration aux mots de passe publics. Créer le premier administrateur :
+### 4. Créer les tables et le compte administrateur
 
 ```bash
-docker compose -f docker-compose.prod.yml --env-file .env.prod exec php php bin/console app:create-admin "admin@athena-dentaire.fr" "Nom Prénom"
+php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+php bin/console app:create-admin "admin@athena-dentaire.fr" "Nom Prénom" --env=prod
 ```
 
 Le mot de passe est demandé ensuite en saisie masquée (12 caractères minimum).
 
-### 5. Relier le domaine à Nginx du conteneur
+**Ne pas charger les fixtures en production** : elles créent des comptes de démonstration aux mots de passe publics.
 
-Dans Plesk, ouvrir le domaine → **Apache & nginx Settings** → **Directives supplémentaires nginx** et ajouter :
+### 5. Droits et cache
 
-```nginx
-location / {
-    proxy_pass http://127.0.0.1:8080;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-}
+Le serveur web doit pouvoir écrire dans `var/` et `public/uploads/` (images envoyées depuis l'admin) :
+
+```bash
+chmod -R ug+rwX var public/uploads
+php bin/console cache:clear --env=prod
+php bin/console cache:warmup --env=prod
 ```
 
-Adapter `8080` à la valeur de `HTTP_PORT`. Activer ensuite le certificat Let's Encrypt et la redirection HTTPS dans Plesk, puis vérifier :
+Avec `var/` et `public/uploads/` en écriture, les images sont conservées entre les mises à jour.
+
+### 6. Rediriger les URL vers `index.php`
+
+Symfony a besoin que toutes les URL passent par `public/index.php`.
+
+- **Serveur Apache** : créer `public/.htaccess` :
+
+  ```apache
+  FallbackResource /index.php
+  ```
+
+  Le dépôt ne contient pas ce fichier pour l'instant. Il faut donc le créer sur le serveur, ou l'ajouter au dépôt.
+
+- **Nginx seul (Plesk)** : dans le domaine → **Apache & nginx Settings** → **Directives supplémentaires nginx** :
+
+  ```nginx
+  location / {
+      try_files $uri /index.php$is_args$args;
+  }
+  ```
+
+### 7. HTTPS
+
+Dans Plesk, activer le certificat **Let's Encrypt** du domaine et la redirection HTTP → HTTPS. Vérifier ensuite :
 
 ```bash
 curl -I https://www.athena-dentaire.fr/
 ```
 
-Le site doit répondre en `200`, et `https://www.athena-dentaire.fr/admin/login` doit afficher la page de connexion.
+La page doit répondre en `200`, et `https://www.athena-dentaire.fr/admin/login` doit afficher la page de connexion.
 
 ### Mise à jour
 
 ```bash
-cd /var/www/vhosts/athena-dentaire.fr/athena
+cd /var/www/vhosts/athena-dentaire.fr/app
 git pull
-make prod-build
-make prod-up
+composer install --no-dev --optimize-autoloader --no-interaction
+composer dump-env prod
+php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+php bin/console cache:clear --env=prod
 ```
 
 ### Points d'attention
 
-- **Images envoyées depuis l'admin** : elles sont écrites dans `public/uploads/` *à l'intérieur* du conteneur, sans volume. Elles sont perdues à la recréation du conteneur (`make prod-build`). Avant une mise à jour, sauvegarder ce dossier ou ajouter un volume pour `public/uploads` dans `docker-compose.prod.yml`.
-- **Base de données** : le volume `db_data_mysql_prod` contient les données MySQL. Ne pas le supprimer (`docker compose down -v`). Prévoir une sauvegarde régulière, par exemple avec `mysqldump` :
-
-  ```bash
-  docker compose -f docker-compose.prod.yml --env-file .env.prod exec database sh -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > sauvegarde.sql
-  ```
-
-- **Fichier `.env.prod`** : il contient des secrets. Ne jamais le committer.
+- **Sauvegardes** : sauvegarder régulièrement la base depuis Plesk (**Outils → Sauvegarde**, ou `mysqldump`), ainsi que `public/uploads/` et `.env.local`.
+- **En-têtes de sécurité** : la configuration Nginx du dépôt (`docker/nginx/default.prod.conf`) ajoute des en-têtes (Content-Security-Policy, HSTS, X-Frame-Options…). Ils ne s'appliquent pas sur un hébergement Plesk classique : les reprendre dans les *Directives supplémentaires nginx* ou dans `public/.htaccess` (`Header set ...`).
+- **`.env.local`** : contient des secrets. Ne jamais le committer (il est déjà ignoré par Git).
 
 ## Structure
 
