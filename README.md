@@ -115,6 +115,18 @@ git push
 
 Puis sur le serveur, `git pull` récupère le nouveau fichier. Ne pas committer `node_modules/`.
 
+### JavaScript (AssetMapper)
+
+Le JavaScript (Stimulus, Turbo, contrôleurs du site) n'a **pas d'étape de build Node** : AssetMapper sert les fichiers de `assets/` directement. Les bibliothèques (`assets/vendor/`) sont versionnées dans le dépôt.
+
+En production, les fichiers doivent être compilés dans `public/assets/` (empreintes, manifeste). Cette commande ne demande pas Node :
+
+```bash
+php bin/console asset-map:compile --env=prod
+```
+
+À lancer **à chaque mise à jour** qui touche `assets/` (y compris après `git pull`). Sans ce dossier, les pages publiques et l'admin échouent en production, car `asset()` ne trouve plus les fichiers.
+
 ### 3. Configurer l'environnement
 
 Créer le fichier `.env.local` à la racine du projet (il n'est pas versionné) :
@@ -193,6 +205,7 @@ git pull   # récupère aussi assets/styles/app.built.css
 composer install --no-dev --optimize-autoloader --no-interaction
 composer dump-env prod
 php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+php bin/console asset-map:compile --env=prod
 php bin/console cache:clear --env=prod
 ```
 
