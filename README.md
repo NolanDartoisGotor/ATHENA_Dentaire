@@ -143,6 +143,7 @@ SECURITY_EMAIL_FROM=security@athena-dentaire.fr
 - `APP_SECRET` : `php -r "echo bin2hex(random_bytes(32));"`
 - `DATABASE_URL` : utiliser l'utilisateur et la base créés dans Plesk (**Bases de données**). Le préfixe `mariadb-` dans `serverVersion` indique à Doctrine qu'il s'agit de MariaDB : ne pas le retirer.
 - `MAILER_DSN` : le SMTP de la messagerie du domaine. Sans lui, les codes de double authentification ne partent pas.
+- `ADMIN_TWO_FACTOR_ENABLED` : le 2FA de l'admin est **actif par défaut**. Ajouter `ADMIN_TWO_FACTOR_ENABLED=false` dans `.env.local` le désactive (par exemple tant que les mails ne partent pas). Seule la valeur exacte `false` le désactive ; à retirer dès que le SMTP fonctionne, car sans 2FA le mot de passe seul donne accès à l'admin. Après modification : `composer dump-env prod` puis `php bin/console cache:clear --env=prod`.
 
 Compiler la configuration pour la production (évite de lire les fichiers `.env` à chaque requête) :
 

@@ -19,6 +19,7 @@ final class AdminTwoFactorAuthenticationTest extends WebTestCase
 
     protected function tearDown(): void
     {
+        $_ENV['ADMIN_TWO_FACTOR_ENABLED'] = $_SERVER['ADMIN_TWO_FACTOR_ENABLED'] = 'true';
         parent::tearDown();
         static::ensureKernelShutdown();
     }
@@ -111,6 +112,23 @@ final class AdminTwoFactorAuthenticationTest extends WebTestCase
         $client->followRedirect();
 
         self::assertResponseRedirects('/admin/2fa');
+    }
+
+    public function testTwoFactorCanBeDisabledWithEnvironmentVariable(): void
+    {
+        $_ENV['ADMIN_TWO_FACTOR_ENABLED'] = $_SERVER['ADMIN_TWO_FACTOR_ENABLED'] = 'false';
+        $client = $this->bootClientWithDatabase();
+        $this->createAdminUser($client);
+
+        $client->request('GET', '/admin/login');
+        $client->submitForm('Se connecter', [
+            '_username' => self::ADMIN_EMAIL,
+            '_password' => self::ADMIN_PASSWORD,
+        ]);
+
+        self::assertResponseRedirects('/admin');
+        $client->followRedirect();
+        self::assertResponseIsSuccessful();
     }
 
     private function bootClientWithDatabase(): KernelBrowser
