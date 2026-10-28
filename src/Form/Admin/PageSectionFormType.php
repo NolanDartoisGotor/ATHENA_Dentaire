@@ -25,6 +25,7 @@ final class PageSectionFormType extends AbstractType
                 'label' => 'Contenu',
                 'attr' => ['rows' => $isLegalPage ? 20 : 8],
                 'required' => false,
+                'empty_data' => '',
                 'help' => $isLegalPage
                     ? 'Le HTML basique est supporté : <p>, <strong>, <ul>, <li>, <a>, <h2>.'
                     : null,

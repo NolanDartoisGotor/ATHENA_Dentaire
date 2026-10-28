@@ -4,19 +4,22 @@
 {% block admin_title %}Tableau de bord{% endblock %}
 
 {% block admin_body %}
+{% set stats = [
+    { key: 'messages', label: 'Messages reçus', value: messagesCount, route: 'admin_message_index', admin: false },
+    { key: 'sections', label: 'Sections éditables', value: sectionsCount, route: 'admin_section_index', admin: true },
+    { key: 'services', label: 'Services', value: servicesCount, route: 'admin_service_index', admin: true },
+    { key: 'facilities', label: 'Plateau technique', value: facilitiesCount, route: 'admin_facility_index', admin: true },
+    { key: 'team', label: 'Membres équipe', value: teamCount, route: 'admin_team_index', admin: true },
+    { key: 'hours', label: 'Horaires', value: hoursCount, route: 'admin_opening_hour_index', admin: true },
+] %}
 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-    <div class="rounded-xl bg-white p-6 shadow">
-        <p class="text-sm text-gray-500">Messages reçus</p>
-        <p class="text-3xl font-bold text-brand-blue">{{ latestMessages|length }}</p>
-    </div>
-    <div class="rounded-xl bg-white p-6 shadow">
-        <p class="text-sm text-gray-500">Sections éditables</p>
-        <p class="text-3xl font-bold text-brand-blue">{{ sectionsCount }}</p>
-    </div>
-    <div class="rounded-xl bg-white p-6 shadow">
-        <p class="text-sm text-gray-500">Membres équipe</p>
-        <p class="text-3xl font-bold text-brand-blue">{{ teamCount }}</p>
-    </div>
+    {% for stat in stats %}
+        {% set linked = not stat.admin or is_granted('ROLE_ADMIN') %}
+        {% if linked %}<a href="{{ path(stat.route) }}" class="block rounded-xl bg-white p-6 shadow hover:shadow-md">{% else %}<div class="rounded-xl bg-white p-6 shadow">{% endif %}
+            <p class="text-sm text-gray-500">{{ stat.label }}</p>
+            <p class="text-3xl font-bold text-brand-blue" data-stat="{{ stat.key }}">{{ stat.value }}</p>
+        {% if linked %}</a>{% else %}</div>{% endif %}
+    {% endfor %}
 </div>
 
 {% if latestMessages is not empty %}
