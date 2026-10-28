@@ -5,9 +5,9 @@ Site one page Symfony pour le cabinet dentaire Athéna Dentaire, avec panel d'ad
 ## Stack
 
 - Symfony 8.1, PHP 8.4.1+
-- PostgreSQL 16, Doctrine ORM
+- MySQL 8.4, Doctrine ORM
 - Tailwind CSS 4 (build npm)
-- Docker (PHP-FPM, Nginx, PostgreSQL, Mailpit)
+- Docker (PHP-FPM, Nginx, MySQL, Mailpit)
 - Asset Mapper + Stimulus
 
 ## Démarrage rapide (Docker)
@@ -66,13 +66,13 @@ Le panel `/admin` permet de gérer :
 
 ```bash
 cp .env.prod.example .env.prod
-# Modifier APP_SECRET, mots de passe PostgreSQL, MAILER_DSN
+# Modifier APP_SECRET, mots de passe MySQL, MAILER_DSN
 make prod-up
 ```
 
 ## Installation sur Plesk
 
-Le site tourne en conteneurs Docker (PHP-FPM, Nginx, PostgreSQL). Plesk occupe déjà les ports 80 et 443 : Nginx du conteneur écoute donc sur un port interne, et Plesk fait le proxy HTTPS vers lui.
+Le site tourne en conteneurs Docker (PHP-FPM, Nginx, MySQL). Plesk occupe déjà les ports 80 et 443 : Nginx du conteneur écoute donc sur un port interne, et Plesk fait le proxy HTTPS vers lui.
 
 ### Prérequis
 
@@ -98,7 +98,7 @@ Dans `.env.prod`, modifier au minimum :
 
 - `APP_SECRET` : `php -r "echo bin2hex(random_bytes(32));"`
 - `DEFAULT_URI` : `https://www.athena-dentaire.fr`
-- `POSTGRES_PASSWORD` et le mot de passe dans `DATABASE_URL` (identiques)
+- `MYSQL_PASSWORD` et le mot de passe dans `DATABASE_URL` (identiques), ainsi que `MYSQL_ROOT_PASSWORD`
 - `MAILER_DSN` : serveur SMTP réel (ex. celui de la messagerie du domaine)
 - `SECURITY_EMAIL_FROM` : adresse expéditrice des codes de double authentification
 - `HTTP_PORT=8080` : port interne du conteneur Nginx (ne pas utiliser 80, occupé par Plesk)
@@ -155,10 +155,10 @@ make prod-up
 ### Points d'attention
 
 - **Images envoyées depuis l'admin** : elles sont écrites dans `public/uploads/` *à l'intérieur* du conteneur, sans volume. Elles sont perdues à la recréation du conteneur (`make prod-build`). Avant une mise à jour, sauvegarder ce dossier ou ajouter un volume pour `public/uploads` dans `docker-compose.prod.yml`.
-- **Base de données** : le volume `db_data_prod` contient les données PostgreSQL. Ne pas le supprimer (`docker compose down -v`). Prévoir une sauvegarde régulière, par exemple avec `pg_dump` :
+- **Base de données** : le volume `db_data_mysql_prod` contient les données MySQL. Ne pas le supprimer (`docker compose down -v`). Prévoir une sauvegarde régulière, par exemple avec `mysqldump` :
 
   ```bash
-  docker compose -f docker-compose.prod.yml --env-file .env.prod exec database pg_dump -U athena athena > sauvegarde.sql
+  docker compose -f docker-compose.prod.yml --env-file .env.prod exec database sh -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > sauvegarde.sql
   ```
 
 - **Fichier `.env.prod`** : il contient des secrets. Ne jamais le committer.

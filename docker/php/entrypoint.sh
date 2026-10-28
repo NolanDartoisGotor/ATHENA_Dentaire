@@ -4,29 +4,18 @@ set -e
 cd /var/www/html
 
 wait_for_database() {
-    case "$DATABASE_URL" in
-        postgresql:*|postgres:*)
-            PGHOST="${POSTGRES_HOST:-database}"
-            PGUSER="${POSTGRES_USER:-athena}"
-            PGDATABASE="${POSTGRES_DB:-athena}"
+    echo "Attente de la base de données..."
+    ATTEMPTS=0
+    MAX_ATTEMPTS=30
 
-            echo "Attente de PostgreSQL (${PGHOST})..."
-            ATTEMPTS=0
-            MAX_ATTEMPTS=30
-
-            until pg_isready -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" > /dev/null 2>&1; do
-                ATTEMPTS=$((ATTEMPTS + 1))
-                if [ "$ATTEMPTS" -ge "$MAX_ATTEMPTS" ]; then
-                    echo "PostgreSQL indisponible après ${MAX_ATTEMPTS} tentatives."
-                    exit 1
-                fi
-                sleep 2
-            done
-            ;;
-        *)
-            return 0
-            ;;
-    esac
+    until php bin/console dbal:run-sql "SELECT 1" > /dev/null 2>&1; do
+        ATTEMPTS=$((ATTEMPTS + 1))
+        if [ "$ATTEMPTS" -ge "$MAX_ATTEMPTS" ]; then
+            echo "Base de données indisponible après ${MAX_ATTEMPTS} tentatives."
+            exit 1
+        fi
+        sleep 2
+    done
 
     echo "Base de données disponible."
 }

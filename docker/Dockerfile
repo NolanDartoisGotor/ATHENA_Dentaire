@@ -8,8 +8,6 @@ FROM php:8.4-fpm-alpine AS php-base
 RUN apk add --no-cache \
     git \
     icu-dev \
-    libpq-dev \
-    postgresql-client \
     unzip \
     nodejs \
     npm \
@@ -17,7 +15,7 @@ RUN apk add --no-cache \
         intl \
         opcache \
         pdo \
-        pdo_pgsql \
+        pdo_mysql \
     && rm -rf /var/cache/apk/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

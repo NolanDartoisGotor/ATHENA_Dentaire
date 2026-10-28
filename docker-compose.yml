@@ -46,19 +46,20 @@ services:
       - athena_dev
 
   database:
-    image: postgres:16-alpine
+    image: mysql:8.4
     container_name: athena_dev_database
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-athena}
-      POSTGRES_USER: ${POSTGRES_USER:-athena}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-athena}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-athena}
+      MYSQL_USER: ${MYSQL_USER:-athena}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-athena}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
     ports:
-      - "${POSTGRES_PORT:-5433}:5432"
+      - "${MYSQL_PORT:-3307}:3306"
     volumes:
-      - db_data_dev:/var/lib/postgresql/data
+      - db_data_mysql_dev:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-athena} -d ${POSTGRES_DB:-athena}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -76,7 +77,7 @@ services:
       - athena_dev
 
 volumes:
-  db_data_dev:
+  db_data_mysql_dev:
   composer_cache:
 
 networks:

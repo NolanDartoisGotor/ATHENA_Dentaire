@@ -52,25 +52,26 @@ services:
       retries: 3
 
   database:
-    image: postgres:16-alpine
+    image: mysql:8.4
     container_name: athena_prod_database
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
-      - db_data_prod:/var/lib/postgresql/data
+      - db_data_mysql_prod:/var/lib/mysql
     networks:
       - athena_prod
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
       interval: 10s
       timeout: 5s
       retries: 10
 
 volumes:
-  db_data_prod:
+  db_data_mysql_prod:
 
 networks:
   athena_prod:
