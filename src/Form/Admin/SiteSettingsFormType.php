@@ -28,8 +28,6 @@ final class SiteSettingsFormType extends AbstractType
             ->add('formRecipientEmail', EmailType::class, ['label' => 'Email destinataire formulaire', 'required' => false])
             ->add('googleMapsEmbedUrl', UrlType::class, ['label' => 'URL Google Maps embed', 'required' => false])
             ->add('heroImage', TextType::class, ['label' => 'Image hero (chemin)', 'required' => false])
-            ->add('mapImage', TextType::class, ['label' => 'Image carte (chemin)', 'required' => false])
-            ->add('accessPlanImage', TextType::class, ['label' => 'Plan d\'accès (chemin)', 'required' => false])
             ->add('assistantsList', TextareaType::class, ['label' => 'Liste des assistantes', 'required' => false])
             ->add('contactFormNotice', TextareaType::class, ['label' => 'Notice formulaire', 'required' => false])
             ->add('submit', SubmitType::class, ['label' => 'Enregistrer']);

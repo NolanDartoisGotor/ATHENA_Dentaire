@@ -2,7 +2,8 @@
 
 @theme {
     --color-brand-blue: #0d3d6e;
-    --color-brand-cyan: #00b5cf;
+    /* #00b5cf échouait au contraste WCAG AA (2.46:1 avec du blanc) */
+    --color-brand-cyan: #007c91;
     --color-brand-gray: #f5f7fa;
     --color-brand-dark: #08294a;
     --color-brand-red: #ef4444;
@@ -16,6 +17,14 @@
 @layer base {
     html {
         scroll-behavior: smooth;
+        /* les ancres ne passent pas sous le header fixe (h-20) */
+        scroll-padding-top: 5rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
     }
 
     body {
