@@ -30,7 +30,8 @@ final class SiteContentLoader
 
     private function loadSiteSettings(ObjectManager $manager): void
     {
-        $settings = (new SiteSettings())
+        // site_settings n'a qu'une ligne (id 1), créée par SiteSettingsRepository dès la première visite
+        $settings = ($manager->find(SiteSettings::class, 1) ?? new SiteSettings())
             ->setOrganizationName('Cabinet Athéna Dentaire')
             ->setTagline('Votre santé bucco-dentaire, notre priorité.')
             ->setAddress('1, rue Jean Addams 14280 Saint-Contest')
