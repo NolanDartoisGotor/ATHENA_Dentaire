@@ -99,6 +99,22 @@ Le dossier web du domaine (`httpdocs`) doit pointer vers le dossier **`public/`*
 composer install --no-dev --optimize-autoloader --no-interaction
 ```
 
+### Assets CSS
+
+Le CSS est compilé par Tailwind et **versionné** : `assets/styles/app.built.css` vient avec le dépôt. Le serveur n'a donc **rien à compiler**, et Node.js n'est pas nécessaire.
+
+Recompiler seulement si tu modifies les styles (`assets/styles/app.css` ou les classes Tailwind utilisées dans les templates), sur ton poste :
+
+```bash
+npm ci
+npm run build:css
+git add assets/styles/app.built.css
+git commit -m "Recompile le CSS"
+git push
+```
+
+Puis sur le serveur, `git pull` récupère le nouveau fichier. Ne pas committer `node_modules/`.
+
 ### 3. Configurer l'environnement
 
 Créer le fichier `.env.local` à la racine du projet (il n'est pas versionné) :
@@ -173,7 +189,7 @@ La page doit répondre en `200`, et `https://www.athena-dentaire.fr/admin/login`
 
 ```bash
 cd /var/www/vhosts/athena-dentaire.fr/app
-git pull
+git pull   # récupère aussi assets/styles/app.built.css
 composer install --no-dev --optimize-autoloader --no-interaction
 composer dump-env prod
 php bin/console doctrine:migrations:migrate --no-interaction --env=prod
