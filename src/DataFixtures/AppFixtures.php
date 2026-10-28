@@ -46,8 +46,6 @@ final class AppFixtures extends Fixture
             ->setContactEmail('contact@athena-dentaire.fr')
             ->setFormRecipientEmail('contact@athena-dentaire.fr')
             ->setHeroImage('images/hero.jpg')
-            ->setMapImage('images/map.jpg')
-            ->setAccessPlanImage('images/access-plan.jpg')
             ->setAssistantsList('Céline • Sabrina • Christine • Céline • Océane • Maryline • Chloé')
             ->setContactFormNotice('Aucune prise de rendez-vous ou annulation ne sera traitée via ce formulaire. Merci de contacter le secrétariat par téléphone.')
             ->setFooterText('© 2024 Cabinet Athéna Dentaire - Mentions Légales - Politique de Confidentialité - Site réalisé par GWM Agency');
@@ -227,18 +225,17 @@ HTML,
     private function loadTeamMembers(ObjectManager $manager): void
     {
         $members = [
-            ['Dr Rémi BRUNSCHVICG', 'Chirurgien-Dentiste (Titulaire)', 'images/team-1.jpg', 1],
-            ['Dr Alexis HUET LAIGNEAU', 'Chirurgien-Dentiste (Titulaire)', 'images/team-2.jpg', 2],
-            ['Dr Julien POULINGUE', 'Chirurgien-Dentiste (Titulaire)', 'images/team-3.jpg', 3],
-            ['Dr Eric LE BESNERAIS', 'Chirurgien-Dentiste (Titulaire)', 'images/team-4.jpg', 4],
-            ['Dr Willyam LEPLONGEON', 'Collaborateur libéral', 'images/team-5.jpg', 5],
+            ['Dr Rémi BRUNSCHVICG', 'Chirurgien-Dentiste (Titulaire)', 1],
+            ['Dr Alexis HUET LAIGNEAU', 'Chirurgien-Dentiste (Titulaire)', 2],
+            ['Dr Julien POULINGUE', 'Chirurgien-Dentiste (Titulaire)', 3],
+            ['Dr Eric LE BESNERAIS', 'Chirurgien-Dentiste (Titulaire)', 4],
+            ['Dr Willyam LEPLONGEON', 'Collaborateur libéral', 5],
         ];
 
-        foreach ($members as [$name, $role, $photo, $position]) {
+        foreach ($members as [$name, $role, $position]) {
             $member = (new TeamMember())
                 ->setFullName($name)
                 ->setRole($role)
-                ->setPhoto($photo)
                 ->setPosition($position);
             $manager->persist($member);
         }

@@ -30,11 +30,12 @@ final class DashboardController extends AbstractController
     ): Response {
         return $this->render('admin/dashboard.html.twig', [
             'latestMessages' => $contactMessageRepository->findLatest(5),
-            'sectionsCount' => count($pageSectionRepository->findAll()),
-            'facilitiesCount' => count($technicalFacilityRepository->findAll()),
-            'servicesCount' => count($serviceRepository->findAll()),
-            'teamCount' => count($teamMemberRepository->findAll()),
-            'hoursCount' => count($openingHourRepository->findAll()),
+            'messagesCount' => $contactMessageRepository->count([]),
+            'sectionsCount' => $pageSectionRepository->count([]),
+            'facilitiesCount' => $technicalFacilityRepository->count([]),
+            'servicesCount' => $serviceRepository->count([]),
+            'teamCount' => $teamMemberRepository->count([]),
+            'hoursCount' => $openingHourRepository->count([]),
         ]);
     }
 }

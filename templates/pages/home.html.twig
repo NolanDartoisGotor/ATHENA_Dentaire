@@ -3,6 +3,7 @@
 {% block title %}{{ settings.organizationName }}{% endblock %}
 
 {% block body %}
+<a href="#contenu" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-brand-blue">Aller au contenu</a>
 {# Header #}
 <header class="fixed inset-x-0 top-0 z-50 border-b border-gray-200 bg-white" data-controller="mobile-menu">
     <div class="page-shell flex h-[72px] items-center justify-between px-5 md:h-20 md:px-20">
@@ -11,7 +12,7 @@
             <span class="font-[family-name:var(--font-literata)] text-lg font-extrabold text-brand-blue md:text-[22px]">Athéna Dentaire</span>
         </a>
 
-        <nav class="hidden items-center gap-10 text-[15px] font-medium text-[#1a1a1a] lg:flex">
+        <nav aria-label="Navigation principale" class="hidden items-center gap-10 text-[15px] font-medium text-[#1a1a1a] xl:flex">
             <a href="#cabinet" class="hover:text-brand-cyan">Le Cabinet</a>
             <a href="#services" class="hover:text-brand-cyan">Services</a>
             <a href="#equipe" class="hover:text-brand-cyan">L'Équipe</a>
@@ -21,21 +22,21 @@
 
         <div class="flex items-center gap-4">
             {% if settings.phone %}
-            <a href="tel:{{ settings.phone|tel_href }}" class="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-brand-cyan lg:hidden" aria-label="Appeler le cabinet">
+            <a href="tel:{{ settings.phone|tel_href }}" class="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-brand-cyan xl:hidden" aria-label="Appeler le cabinet">
                 <img src="{{ asset('images/icon-phone.svg') }}" alt="" class="h-5 w-5" width="20" height="20">
             </a>
-            <a href="tel:{{ settings.phone|tel_href }}" class="btn-primary hidden lg:inline-flex">
+            <a href="tel:{{ settings.phone|tel_href }}" class="btn-primary hidden xl:inline-flex">
                 <img src="{{ asset('images/icon-phone.svg') }}" alt="" class="h-5 w-5" width="20" height="20">
                 APPELER LE CABINET
             </a>
             {% endif %}
-            <button type="button" class="lg:hidden" data-action="mobile-menu#toggle" aria-label="Menu">
+            <button type="button" class="xl:hidden" data-action="mobile-menu#toggle" data-mobile-menu-target="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-mobile">
                 <img src="{{ asset('images/icon-menu.svg') }}" alt="" class="h-6 w-6" width="24" height="24">
             </button>
         </div>
     </div>
 
-    <nav data-mobile-menu-target="menu" class="hidden border-t border-gray-200 bg-white px-5 py-4 lg:hidden">
+    <nav id="menu-mobile" aria-label="Navigation mobile" data-mobile-menu-target="menu" class="hidden border-t border-gray-200 bg-white px-5 py-4 xl:hidden">
         <div class="flex flex-col gap-3 text-[15px] font-medium">
             <a href="#cabinet" data-action="mobile-menu#close">Le Cabinet</a>
             <a href="#services" data-action="mobile-menu#close">Services</a>
@@ -47,13 +48,13 @@
     </nav>
 </header>
 
-<main class="pt-[72px] md:pt-20">
+<main id="contenu" tabindex="-1" class="pt-[72px] md:pt-20">
     {# Hero #}
     <section id="cabinet" class="bg-white">
         <div class="page-shell flex flex-col lg:min-h-[700px] lg:flex-row">
-            <div class="h-[240px] w-full lg:h-auto lg:flex-1">
+            <div class="relative h-[240px] w-full lg:h-auto lg:flex-1">
                 {% if settings.heroImage %}
-                    <img src="{{ asset(settings.heroImage) }}" alt="Cabinet Athéna Dentaire" class="h-full w-full object-cover">
+                    <img src="{{ asset(settings.heroImage) }}" alt="Cabinet Athéna Dentaire" class="absolute inset-0 h-full w-full object-cover">
                 {% endif %}
             </div>
             <div class="flex w-full flex-col gap-5 p-4 md:gap-6 md:p-16 lg:w-[600px] lg:shrink-0 lg:pt-16">
@@ -73,7 +74,7 @@
                     </div>
                     {% if settings.phone %}
                         <a href="tel:{{ settings.phone|tel_href }}" class="mb-6 inline-block font-[family-name:var(--font-ibm-mono)] text-[26px] font-bold text-brand-cyan hover:underline md:text-[36px]">
-                            📞 {{ settings.phone }}
+                            <span aria-hidden="true">📞</span> {{ settings.phone }}
                         </a>
                     {% endif %}
                     <div class="space-y-3 text-sm">
@@ -93,7 +94,6 @@
     <section id="informations" class="bg-white">
         <div class="page-shell flex flex-col bg-brand-blue lg:flex-row">
         <div class="flex flex-1">
-            <div class="w-1.5 shrink-0 bg-brand-red md:w-2"></div>
             <div class="flex flex-1 flex-col gap-4 p-6 md:gap-5 md:p-[60px]">
                 <div class="flex items-center gap-3">
                     <img src="{{ asset('images/icon-siren.svg') }}" alt="" class="h-6 w-6 md:h-8 md:w-8" width="32" height="32">
@@ -104,13 +104,12 @@
                 <p class="text-[13px] leading-[18px] text-white/80 md:text-base md:leading-[26px]">{{ emergencySection.body|nl2br }}</p>
                 {% if settings.emergencyPhone %}
                     <a href="tel:{{ settings.emergencyPhone|tel_href }}" class="inline-block font-[family-name:var(--font-ibm-mono)] text-lg font-bold text-white hover:underline md:text-2xl">
-                        📞 {{ settings.emergencyPhone }}
+                        <span aria-hidden="true">📞</span> {{ settings.emergencyPhone }}
                     </a>
                 {% endif %}
             </div>
         </div>
         <div class="flex flex-1">
-            <div class="w-1.5 shrink-0 bg-brand-cyan md:w-2"></div>
             <div class="flex flex-1 flex-col gap-4 p-6 md:gap-5 md:p-[60px]">
                 <div class="flex items-center gap-3">
                     <img src="{{ asset('images/icon-clipboard.svg') }}" alt="" class="h-6 w-6 md:h-8 md:w-8" width="32" height="32">
@@ -192,18 +191,9 @@
 
             <div class="mb-10 grid gap-6 md:grid-cols-2 lg:mb-20 lg:grid-cols-5 lg:gap-10">
                 {% for member in teamMembers %}
-                    <div class="flex items-center gap-4 lg:flex-col lg:text-center">
-                        <div class="shrink-0 overflow-hidden rounded-full border-2 border-brand-cyan p-0.5 lg:border-[3px] lg:p-1">
-                            {% if member.photo %}
-                                <img src="{{ asset(member.photo) }}" alt="{{ member.fullName }}" class="h-20 w-20 rounded-full object-cover lg:h-[180px] lg:w-[180px]">
-                            {% else %}
-                                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-brand-gray lg:h-[180px] lg:w-[180px]"></div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <p class="text-base font-normal text-[#1a1a1a]">{{ member.fullName }}</p>
-                            <p class="text-[13px] text-[#4b5563]">{{ member.role }}</p>
-                        </div>
+                    <div class="lg:text-center">
+                        <p class="text-base font-normal text-[#1a1a1a]">{{ member.fullName }}</p>
+                        <p class="text-[13px] text-[#4b5563]">{{ member.role }}</p>
                     </div>
                 {% endfor %}
             </div>
@@ -220,25 +210,30 @@
         </div>
     </section>
 
-    {# Footer / Contact #}
+    {# Accès / Contact #}
     <section id="acces" class="bg-brand-blue">
-        <div class="page-section py-10 md:py-5">
+        <div class="page-section py-[60px] md:py-[120px]">
         <div class="page-inner grid gap-10 md:grid-cols-2 md:gap-20">
             <div id="contact" class="space-y-6 md:space-y-8">
                 <h2 class="font-[family-name:var(--font-montserrat)] text-[32px] font-bold leading-tight text-white md:text-[48px] md:leading-[58px]">Nous trouver</h2>
                 <div class="space-y-4 md:space-y-6">
-                    {% if settings.mapImage %}
-                        <img src="{{ asset(settings.mapImage) }}" alt="Carte" class="h-[200px] w-full rounded-xl object-cover md:h-[360px] md:rounded-2xl">
-                    {% elseif settings.googleMapsEmbedUrl %}
-                        <iframe src="{{ settings.googleMapsEmbedUrl }}" class="h-[200px] w-full rounded-xl md:h-[360px] md:rounded-2xl" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Carte Google Maps"></iframe>
+                    {% if settings.googleMapsEmbedUrl or settings.address %}
+                        {# iframe chargée seulement au clic : Google Maps dépose des cookies (consentement RGPD) #}
+                        <div data-controller="map-consent"
+                             data-map-consent-src-value="{{ settings.googleMapsEmbedUrl ?: 'https://www.google.com/maps?q=' ~ (settings.organizationName ~ ', ' ~ settings.address)|url_encode ~ '&output=embed' }}"
+                             data-map-consent-title-value="Carte Google Maps : {{ settings.address }}"
+                             class="h-[200px] w-full overflow-hidden rounded-xl bg-white/10 md:h-[360px] md:rounded-2xl">
+                            <div class="flex h-full flex-col items-center justify-center gap-4 p-6 text-center text-white">
+                                <p class="max-w-[360px] text-[13px] leading-[18px] text-white/80 md:text-base md:leading-[26px]">La carte est fournie par Google Maps, qui peut déposer des cookies sur votre appareil.</p>
+                                <button type="button" data-action="map-consent#load" class="btn-primary">Afficher la carte</button>
+                            </div>
+                        </div>
                     {% endif %}
                     <div class="text-white">
                         <p class="text-base">{{ settings.organizationName }}</p>
-                        <p class="text-[13px] opacity-80 md:text-base">{{ settings.address }}</p>
+                        <address class="text-[13px] not-italic opacity-80 md:text-base">{{ settings.address }}</address>
+                        <a href="https://www.google.com/maps/dir/?api=1&amp;destination={{ (settings.organizationName ~ ', ' ~ settings.address)|url_encode }}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block text-[13px] font-semibold underline underline-offset-2 hover:no-underline md:text-base">Itinéraire Google Maps<span class="sr-only"> (nouvel onglet)</span></a>
                     </div>
-                    {% if settings.accessPlanImage %}
-                        <img src="{{ asset(settings.accessPlanImage) }}" alt="Plan d'accès" class="h-20 w-full rounded-lg object-cover md:h-[120px] md:rounded-xl">
-                    {% endif %}
                 </div>
             </div>
 
@@ -253,11 +248,16 @@
                     {% endfor %}
                 {% endfor %}
 
-                <div class="max-w-[600px] space-y-5 md:space-y-6 md:p-8">
+                <div class="max-w-[600px] space-y-5 md:space-y-6">
                     {% if settings.contactFormNotice %}
-                        <div class="flex gap-3 rounded-xl border border-b-4 border-[#f59e0b] border-l-[#f59e0b] bg-white p-4">
+                        <div class="flex gap-3 rounded-xl bg-amber-50 p-4 text-amber-900 md:gap-4 md:p-5">
                             <img src="{{ asset('images/icon-alert.svg') }}" alt="" class="mt-0.5 h-5 w-5 shrink-0 md:h-6 md:w-6" width="24" height="24">
-                            <p class="text-[13px] leading-[18px] text-[#111827]">{{ settings.contactFormNotice }}</p>
+                            <div class="space-y-1 text-[13px] leading-[20px] md:text-sm md:leading-[22px]">
+                                <p>{{ settings.contactFormNotice }}</p>
+                                {% if settings.phone %}
+                                    <p>Secrétariat : <a href="tel:{{ settings.phone|tel_href }}" class="font-semibold underline underline-offset-2 hover:no-underline">{{ settings.phone }}</a></p>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endif %}
 
@@ -291,7 +291,7 @@
                         </div>
                         <div class="flex items-start gap-2.5">
                             {{ form_widget(form.consent, {attr: {class: 'mt-1 h-[18px] w-[18px] rounded border-gray-200'}}) }}
-                            {{ form_label(form.consent, "J'accepte que mes données soient utilisées pour me recontacter, conformément à la <a href=\"" ~ path('privacy_policy') ~ "\" class=\"underline hover:text-brand-cyan\" target=\"_blank\" rel=\"noopener noreferrer\">politique de confidentialité</a>.", {label_attr: {class: 'text-[13px] leading-[18px] text-white'}, label_html: true}) }}
+                            {{ form_label(form.consent, "J'accepte que mes données soient utilisées pour me recontacter, conformément à la <a href=\"" ~ path('privacy_policy') ~ "\" class=\"underline hover:opacity-80\" target=\"_blank\" rel=\"noopener noreferrer\">politique de confidentialité</a>.", {label_attr: {class: 'text-[13px] leading-[18px] text-white'}, label_html: true}) }}
                         </div>
                         {{ form_errors(form.consent) }}
                         {{ form_widget(form.submit, {attr: {class: 'btn-primary w-full uppercase md:normal-case'}}) }}
@@ -301,11 +301,7 @@
         </div>
         </div>
 
-        <div class="bg-brand-dark">
-            <div class="page-shell px-5 py-5 text-center md:flex md:h-[60px] md:items-center md:justify-center md:py-0">
-                {% include 'partials/site_footer.html.twig' %}
-            </div>
-        </div>
     </section>
 </main>
+{% include 'partials/site_footer.html.twig' %}
 {% endblock %}

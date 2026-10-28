@@ -23,17 +23,17 @@ final class ContactFormType extends AbstractType
         $builder
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['placeholder' => 'Votre nom'],
+                'attr' => ['placeholder' => 'Votre nom', 'autocomplete' => 'family-name'],
                 'constraints' => [new NotBlank()],
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['placeholder' => 'Votre prénom'],
+                'attr' => ['placeholder' => 'Votre prénom', 'autocomplete' => 'given-name'],
                 'constraints' => [new NotBlank()],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'attr' => ['placeholder' => 'email@exemple.com'],
+                'attr' => ['placeholder' => 'email@exemple.com', 'autocomplete' => 'email'],
                 'constraints' => [new NotBlank()],
             ])
             ->add('subject', TextType::class, [
