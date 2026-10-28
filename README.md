@@ -159,7 +159,13 @@ php bin/console app:create-admin "admin@athena-dentaire.fr" "Nom Prénom" --env=
 
 Le mot de passe est demandé ensuite en saisie masquée (12 caractères minimum).
 
-**Ne pas charger les fixtures en production** : elles créent des comptes de démonstration aux mots de passe publics.
+Charger le contenu de base (textes, horaires, pôles, équipe) :
+
+```bash
+php bin/console app:load-content --env=prod
+```
+
+Cette commande refuse de tourner si du contenu existe déjà. **Ne pas utiliser les fixtures en production** : elles créent des comptes de démonstration aux mots de passe publics.
 
 ### 5. Droits et cache
 
