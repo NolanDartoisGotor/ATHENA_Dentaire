@@ -70,6 +70,99 @@ cp .env.prod.example .env.prod
 make prod-up
 ```
 
+## Installation sur Plesk
+
+Le site tourne en conteneurs Docker (PHP-FPM, Nginx, PostgreSQL). Plesk occupe déjà les ports 80 et 443 : Nginx du conteneur écoute donc sur un port interne, et Plesk fait le proxy HTTPS vers lui.
+
+### Prérequis
+
+- Un abonnement Plesk avec accès SSH root ou sudo
+- Docker et Docker Compose installés sur le serveur (extension Docker de Plesk, ou installation manuelle)
+- Un domaine pointant vers le serveur (ex. `www.athena-dentaire.fr`)
+
+### 1. Cloner le projet
+
+```bash
+cd /var/www/vhosts/athena-dentaire.fr
+git clone <url-du-depot> athena
+cd athena
+```
+
+### 2. Configurer l'environnement
+
+```bash
+cp .env.prod.example .env.prod
+```
+
+Dans `.env.prod`, modifier au minimum :
+
+- `APP_SECRET` : `php -r "echo bin2hex(random_bytes(32));"`
+- `DEFAULT_URI` : `https://www.athena-dentaire.fr`
+- `POSTGRES_PASSWORD` et le mot de passe dans `DATABASE_URL` (identiques)
+- `MAILER_DSN` : serveur SMTP réel (ex. celui de la messagerie du domaine)
+- `SECURITY_EMAIL_FROM` : adresse expéditrice des codes de double authentification
+- `HTTP_PORT=8080` : port interne du conteneur Nginx (ne pas utiliser 80, occupé par Plesk)
+
+### 3. Lancer les conteneurs
+
+```bash
+make prod-up
+make prod-logs    # vérifier qu'il n'y a pas d'erreur au démarrage
+```
+
+Les migrations sont lancées automatiquement au démarrage (`RUN_MIGRATIONS=true`).
+
+### 4. Créer le compte administrateur
+
+Les fixtures ne doivent **pas** être chargées en production : elles créent des comptes de démonstration aux mots de passe publics. Créer le premier administrateur :
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env.prod exec php php bin/console app:create-admin "admin@athena-dentaire.fr" "Nom Prénom"
+```
+
+Le mot de passe est demandé ensuite en saisie masquée (12 caractères minimum).
+
+### 5. Relier le domaine à Nginx du conteneur
+
+Dans Plesk, ouvrir le domaine → **Apache & nginx Settings** → **Directives supplémentaires nginx** et ajouter :
+
+```nginx
+location / {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+Adapter `8080` à la valeur de `HTTP_PORT`. Activer ensuite le certificat Let's Encrypt et la redirection HTTPS dans Plesk, puis vérifier :
+
+```bash
+curl -I https://www.athena-dentaire.fr/
+```
+
+Le site doit répondre en `200`, et `https://www.athena-dentaire.fr/admin/login` doit afficher la page de connexion.
+
+### Mise à jour
+
+```bash
+cd /var/www/vhosts/athena-dentaire.fr/athena
+git pull
+make prod-build
+make prod-up
+```
+
+### Points d'attention
+
+- **Images envoyées depuis l'admin** : elles sont écrites dans `public/uploads/` *à l'intérieur* du conteneur, sans volume. Elles sont perdues à la recréation du conteneur (`make prod-build`). Avant une mise à jour, sauvegarder ce dossier ou ajouter un volume pour `public/uploads` dans `docker-compose.prod.yml`.
+- **Base de données** : le volume `db_data_prod` contient les données PostgreSQL. Ne pas le supprimer (`docker compose down -v`). Prévoir une sauvegarde régulière, par exemple avec `pg_dump` :
+
+  ```bash
+  docker compose -f docker-compose.prod.yml --env-file .env.prod exec database pg_dump -U athena athena > sauvegarde.sql
+  ```
+
+- **Fichier `.env.prod`** : il contient des secrets. Ne jamais le committer.
+
 ## Structure
 
 - `templates/pages/home.html.twig` — page publique one page
