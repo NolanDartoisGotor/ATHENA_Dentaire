@@ -149,13 +149,7 @@ Avec `var/` et `public/uploads/` en écriture, les images sont conservées entre
 
 Symfony a besoin que toutes les URL passent par `public/index.php`.
 
-- **Serveur Apache** : créer `public/.htaccess` :
-
-  ```apache
-  FallbackResource /index.php
-  ```
-
-  Le dépôt ne contient pas ce fichier pour l'instant. Il faut donc le créer sur le serveur, ou l'ajouter au dépôt.
+- **Serveur Apache** : le fichier `public/.htaccess` (`FallbackResource /index.php`) est versionné dans le dépôt, avec le package `symfony/apache-pack`. Vérifier qu'il est bien présent après `git pull`.
 
 - **Nginx seul (Plesk)** : dans le domaine → **Apache & nginx Settings** → **Directives supplémentaires nginx** :
 
